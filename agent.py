@@ -42,17 +42,17 @@ async def handle_question(question: str, files: dict):
     return final_answer
 
 
-async def ask_openai(model, question):
-    """Ask OpenAI LLM."""
-    resp = openai.ChatCompletion.create(
+import openai
+
+async def ask_openai(model: str, prompt: str):
+    # New API usage (note: no .create, and async usage)
+    response = await openai.chat.completions.acreate(
         model=model,
-        messages=[
-            {"role": "system", "content": "You are a helpful data analyst who answers in JSON format."},
-            {"role": "user", "content": question}
-        ],
-        temperature=0
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0,
     )
-    return resp.choices[0].message.content.strip()
+    return response.choices[0].message.content
+
 
 
 async def ask_claude(question):
@@ -140,3 +140,4 @@ def generate_dummy_plot():
     buf.seek(0)
     encoded = base64.b64encode(buf.read()).decode()
     return f"data:image/png;base64,{encoded}"
+
